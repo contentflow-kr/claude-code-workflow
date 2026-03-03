@@ -153,4 +153,4 @@ your-project/
 
 ## 라이선스
 
-MIT
+[CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) — 자유롭게 사용/수정 가능, **상업적 판매 금지**.
