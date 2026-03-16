@@ -3,11 +3,13 @@ allowed-tools: [Read, Edit, Write, Bash, AskUserQuestion]
 description: "End session: update chatlog + create worklog + optional Obsidian sync + Git commit"
 ---
 
-# /session-end v3 - Session End with Git Commit
+# /session-end v4 - Session End with Obsidian CLI + Git Commit
 
 ## Purpose
 Record all work from the current session to chatlog.md, create a dated worklog,
 optionally sync to Obsidian, and commit changes to Git.
+**v3**: Git commit integration with user confirmation.
+**v4**: Optional Obsidian CLI integration (Daily Note + task count).
 
 ## Execution
 
@@ -87,7 +89,7 @@ echo "| RUL-{num} | {rule description} | ERR-{cause ID} |" >> ~/work_logs/error-
 ### 5. Update CHANGELOG.md (if code changed)
 - Summarize changed files and their modifications
 
-### 6. Create dated worklog [OPTIONAL: Obsidian sync]
+### 6. Create dated worklog + Optional Obsidian sync
 
 **Filename**: `YYYY_MM_DD_[task-name]_worklog.md`
 - Task name: concise description (2-5 words)
@@ -96,12 +98,12 @@ echo "| RUL-{num} | {rule description} | ERR-{cause ID} |" >> ~/work_logs/error-
 **Create in project**: `work_logs/YYYY_MM_DD_[task-name]_worklog.md`
 
 **[OPTIONAL] Obsidian sync**:
-If `OBSIDIAN_PATH` is configured in your CLAUDE.md or project settings:
-- Also write the worklog to `{OBSIDIAN_PATH}/YYYY_MM_DD_[task-name]_worklog.md`
+If `OBSIDIAN_WORKLOG_PATH` is configured in your CLAUDE.md or project settings:
+- Also write the worklog to `{OBSIDIAN_WORKLOG_PATH}/YYYY_MM_DD_[task-name]_worklog.md`
 - Use the **Write tool** (not cp — may fail on cloud-synced directories)
 - If same date has multiple sessions, create separate files (different task names)
 
-If Obsidian is not configured, skip this step.
+If Obsidian is not configured, skip this step silently.
 
 **Worklog content**: Copy the session content from chatlog.md with a project header:
 ```markdown
@@ -110,7 +112,36 @@ If Obsidian is not configured, skip this step.
 {Session content from chatlog.md}
 ```
 
-### 7. Git Commit (v3)
+### 6.5. Obsidian CLI integration (v4, optional)
+
+**Condition**: Only if Obsidian CLI is in PATH and the app is running. Skip silently on failure.
+
+#### 6.5-1. Append to Daily Note
+```bash
+obsidian daily:append content="- [x] Claude Code Session {N} — {1-line summary}"
+```
+
+#### 6.5-2. Report task count
+```bash
+VAULT_TODO=$(obsidian tasks todo total 2>/dev/null || echo "N/A")
+DAILY_TODO=$(obsidian tasks daily todo total 2>/dev/null || echo "0")
+```
+
+Include in final report (step 8).
+
+#### 6.5-3. Set worklog properties
+```bash
+obsidian property:set name=status value=done path="{worklog path}"
+obsidian property:set name=session value={N} type=number path="{worklog path}"
+obsidian property:set name=project value="{project}" path="{worklog path}"
+```
+
+#### 6.5-4. Important
+- CLI failure must NOT interrupt session-end — file recording takes priority
+- Use `2>/dev/null || echo "..."` pattern to absorb errors
+- If Obsidian app is closed, skip silently
+
+### 7. Git Commit
 
 **Condition**: Only if current directory is a git repo. If not, skip to step 8.
 
@@ -146,8 +177,6 @@ Session {N}: {topic summary}
 - {task 1}
 - {task 2}
 - {task 3}
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 EOF
 )"
 ```
@@ -173,4 +202,5 @@ EOF
 - Summary of all recorded items
 - Worklog file path(s)
 - Git commit result (hash + message, or skip status)
+- Obsidian CLI result (if applicable): Daily Note status + task counts
 - Suggested tasks for next session

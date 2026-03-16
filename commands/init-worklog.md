@@ -1,13 +1,14 @@
 ---
-allowed-tools: [Read, Write, Bash, Glob]
-description: "Initialize work_logs structure (chatlog.md, remind.md, CHANGELOG.md, error tracking)"
+allowed-tools: [Read, Write, Edit, Bash, Glob]
+description: "Initialize work_logs structure + register in work-tree.md"
 ---
 
-# /init-worklog - Initialize Project Work Logs
+# /init-worklog v2 - Initialize Project Work Logs + Register in Project Map
 
 ## Purpose
-Create the work_logs/ directory structure in the current project.
+Create the work_logs/ directory structure in the current project and register it in work-tree.md.
 Existing files are never overwritten — only missing files are created.
+**v2**: Auto-register project in parent work-tree.md and master ~/work-tree.md.
 
 ## Execution
 
@@ -93,6 +94,46 @@ mkdir -p work_logs
 |----|------|-----------|
 ```
 
-### 4. Completion report
+### 4. Register in work-tree.md (v2)
+
+After creating work_logs/, register the project in work-tree.md for cross-project navigation.
+
+#### 4-1. Find parent work-tree.md
+
+Search upward from current directory (max 3 levels):
+```
+Example: /Users/you/projects/my-app/
+  → Level 1: /Users/you/projects/work-tree.md  ← register here if exists
+  → Level 2: /Users/you/work-tree.md           ← also register here
+```
+
+#### 4-2. Add row to parent work-tree.md
+
+If a work-tree.md table exists in a parent directory, add a project row.
+Skip if already registered (duplicate check by project name or path).
+
+**Row format**:
+```
+| {Project Name} | `{relative-path}/` | O | {description} |
+```
+
+#### 4-3. Add row to master ~/work-tree.md
+
+Also register in the master `~/work-tree.md`:
+- Find the appropriate section based on the absolute path
+- If no matching section, add under `## Other`
+
+**Row format**:
+```
+| {Project Name} | `{home-relative-path}/` | O | {description} |
+```
+
+#### 4-4. Duplicate check
+
+Before adding, check existing tables for matching project name or path.
+If already listed with `work_logs = X`, update to `O`.
+
+### 5. Completion report
 - List created files
 - List skipped files (already existed)
+- Show work-tree.md registration result (which files were updated)
