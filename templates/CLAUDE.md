@@ -23,18 +23,20 @@ Escalation: haiku detects complexity → delegate to opus / sonnet needs full im
 
 ## Work Log System (Required)
 
-### Session Start
-1. Check `work_logs/` exists → if not, run `/init-worklog`
-2. Read `chatlog.md` + `remind.md` + `error-rules.md`
-3. Read global `~/work_logs/error-rules.md` (if exists)
-4. Resume unfinished tasks first
+### Session Start (`/session-start` v3)
+1. Load `work-tree.md` project map (current dir → parent 3 levels → `~/work-tree.md`)
+2. Check `work_logs/` exists → if not, run `/init-worklog`
+3. Read `chatlog.md` + `remind.md` + `error-rules.md`
+4. Read global `~/work_logs/error-rules.md` (if exists)
+5. Resume unfinished tasks first
 
-### Session End (`/session-end` v3)
+### Session End (`/session-end` v4)
 1. Append session content to project `chatlog.md`
 2. If errors occurred: update `error_logs.md` (ERR-###) + `error-rules.md` (RUL-###)
 3. Append 1-line summary to `~/work_logs/chatlog.md` dashboard (if exists)
 4. Create `YYYY_MM_DD_[task-name]_worklog.md` in work_logs/
-5. **Git commit** — with user confirmation (commit all / selective / skip)
+5. [Optional] Obsidian CLI — Daily Note append + task count report
+6. **Git commit** — with user confirmation (commit all / selective / skip)
 
 ### File Structure
 
@@ -91,8 +93,8 @@ Escalation: haiku detects complexity → delegate to opus / sonnet needs full im
 | Command | Purpose | When to Use |
 |---------|---------|-------------|
 | `/init-worklog` | Initialize work_logs/ structure | Adding work_logs to existing project |
-| `/session-start` | Load chatlog + remind + error-rules | Start of session |
-| `/session-end` | Log session + worklog + Git commit (v3) | Before ending session |
+| `/session-start` | Load work-tree + chatlog + remind + error-rules (v3) | Start of session |
+| `/session-end` | Log session + worklog + Obsidian CLI + Git commit (v4) | Before ending session |
 
 ---
 

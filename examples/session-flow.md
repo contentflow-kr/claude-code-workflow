@@ -10,10 +10,14 @@ A typical workflow using `/session-start` and `/session-end`.
 You: /session-start
 ```
 
-Claude reads `work_logs/chatlog.md`, `remind.md`, and `error-rules.md`, then outputs:
+Claude reads `work-tree.md` (project map), `work_logs/chatlog.md`, `remind.md`, and `error-rules.md`, then outputs:
 
 ```
 ## Session Context Restored
+
+### Project Map (work-tree.md)
+- Loaded from: ~/work-tree.md
+- Sub-projects: 12 total (8 with work_logs)
 
 ### Previous Session Summary
 - Last session: 2026-03-03 - Add user authentication
@@ -56,7 +60,8 @@ Commit session changes to Git?
   [ ] Skip
 ```
 
-6. **Commits** with auto-generated message:
+6. **[Optional] Obsidian CLI** — appends to Daily Note + reports task count
+7. **Commits** with auto-generated message:
 ```
 Session 5: Add refresh token rotation
 
@@ -67,7 +72,7 @@ Session 5: Add refresh token rotation
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
-7. **Reports completion** with next session suggestions.
+8. **Reports completion** with next session suggestions.
 
 ---
 

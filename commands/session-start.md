@@ -1,15 +1,27 @@
 ---
-allowed-tools: [Read, Glob]
+allowed-tools: [Read, Glob, Bash]
 description: "Restore session context by loading chatlog.md + remind.md"
 ---
 
-# /session-start - Restore Session Context
+# /session-start v3 - Restore Session Context
 
 ## Purpose
 Quickly restore previous work context at the start of a new session.
 Load chatlog.md for unfinished tasks, remind.md for project rules.
+**v3**: Auto-load `work-tree.md` for cross-project navigation.
 
 ## Execution
+
+### 0. Load work-tree.md (project map)
+
+Search for `work-tree.md` to build a project map for cross-project navigation:
+1. Check current directory for `work-tree.md`
+2. If not found, check parent directories (up to 3 levels)
+3. If still not found, check `~/work-tree.md` (master index)
+
+> work-tree.md maps all sub-projects with their paths, work_logs status, and .env locations.
+> When the user requests work on a different project mid-session, use this map to locate
+> the target project's `work_logs/remind.md` and load it before starting.
 
 ### 1. Discover project work_logs
 ```
@@ -27,6 +39,10 @@ Glob: work_logs/{chatlog,remind,CHANGELOG,error-rules}.md
 
 ```
 ## Session Context Restored
+
+### Project Map (work-tree.md)
+- Loaded from: {path}
+- Sub-projects: {n} total ({m} with work_logs)
 
 ### Previous Session Summary
 - Last session: {date} - {topic}

@@ -36,6 +36,33 @@ Automatically write worklogs to your Obsidian vault.
 
 **Important**: Use the `Write` tool for Obsidian files (not `cp` — may fail on cloud-synced directories like iCloud).
 
+### Work-Tree Project Map (v1.1.0+)
+
+Create `work-tree.md` in your workspace root to enable cross-project navigation:
+
+```markdown
+# My Workspace Work-Tree
+
+| Project | Path | work_logs | Description |
+|---------|------|-----------|-------------|
+| my-app | `projects/my-app/` | O | Main application |
+| api-server | `projects/api-server/` | O | Backend API |
+| docs | `projects/docs/` | X | Documentation |
+```
+
+Or create a master index at `~/work-tree.md` for all workspaces.
+
+`/session-start` searches: current dir → parent (3 levels) → `~/work-tree.md`
+
+### Obsidian CLI (v4, optional)
+
+If you use Obsidian with [Obsidian CLI](https://github.com/anthropics/obsidian-cli):
+- `/session-end` will append session summary to your Daily Note
+- Reports vault-wide unfinished task count
+- Fails silently if CLI unavailable
+
+No configuration needed — auto-detected at runtime.
+
 ### Git Commit Convention
 
 Default convention is used in `/session-end`:

@@ -32,6 +32,7 @@ The `/clear` → `/session-start` cycle becomes a **context refresh** instead of
 ┌─────────────────────────────────────────────────┐
 │                  /session-start                  │
 │                                                  │
+│  0. Read work-tree.md    → Project map           │
 │  1. Read remind.md       → Project rules         │
 │  2. Read error-rules.md  → Error prevention      │
 │  3. Read chatlog.md      → Unfinished tasks      │
@@ -54,7 +55,7 @@ The `/clear` → `/session-start` cycle becomes a **context refresh** instead of
                        │
                        ▼
 ┌─────────────────────────────────────────────────┐
-│                  /session-end                    │
+│                /session-end v4                   │
 │                                                  │
 │  1. Analyze session → extract tasks, decisions   │
 │  2. Append session block to chatlog.md           │
@@ -64,8 +65,10 @@ The `/clear` → `/session-start` cycle becomes a **context refresh** instead of
 │  6. Update CHANGELOG.md                          │
 │  7. Create dated worklog file                    │
 │  8. [Optional] Sync worklog to Obsidian          │
-│  9. Git commit with auto-generated message       │
-│ 10. Output: final report + next session tasks    │
+│  9. [Optional] Obsidian CLI integration          │
+│     → Daily Note append + task count report      │
+│ 10. Git commit with auto-generated message       │
+│ 11. Output: final report + next session tasks    │
 └─────────────────────────────────────────────────┘
 ```
 
@@ -231,14 +234,22 @@ Existing files are **never overwritten** — only missing files are created.
 
 Restores context from the previous session.
 
+**Step 0 — Load project map (v1.1.0+):**
+
+Searches for `work-tree.md` to build a cross-project navigation map:
+1. Current directory → parent directories (up to 3 levels) → `~/work-tree.md`
+2. If found, loads project paths and work_logs status for mid-session project switching
+
 **What it loads (in order):**
-1. `remind.md` — Project rules
-2. `error-rules.md` — Error prevention rules (project-level)
-3. `chatlog.md` — Previous sessions and unfinished tasks
-4. `CHANGELOG.md` — Recent changes
-5. `~/work_logs/error-rules.md` — Global shared rules (if exists)
+1. `work-tree.md` — Project map (cross-project navigation)
+2. `remind.md` — Project rules
+3. `error-rules.md` — Error prevention rules (project-level)
+4. `chatlog.md` — Previous sessions and unfinished tasks
+5. `CHANGELOG.md` — Recent changes
+6. `~/work_logs/error-rules.md` — Global shared rules (if exists)
 
 **What it outputs:**
+- Project map summary (sub-projects count)
 - Previous session summary
 - Unfinished tasks with count
 - Active project rules
@@ -261,8 +272,17 @@ Records the current session and prepares for the next one.
 | 4 | Update project rules | `remind.md` |
 | 5 | Update changelog | `CHANGELOG.md` |
 | 6 | Create dated worklog | `work_logs/YYYY_MM_DD_*.md` |
+| 6.5 | Obsidian CLI (optional, v4) | Daily Note + tasks |
 | 7 | Git commit (with user confirmation) | — |
 | 8 | Output final report | — |
+
+**Obsidian CLI integration (v4, optional):**
+
+If [Obsidian CLI](https://github.com/anthropics/obsidian-cli) is installed and the app is running:
+- Appends session summary to Daily Note
+- Reports vault-wide unfinished task count
+- Sets worklog properties (status, session number, project)
+- Fails silently if CLI unavailable — file-based recording always takes priority
 
 ---
 
