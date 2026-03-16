@@ -222,20 +222,38 @@ Worklogs auto-copied to your Obsidian vault. CLI integration for Daily Notes and
 
 ---
 
-## vs Claude Code `/memory`
+## vs Claude Code Built-in Features
 
-| | `/memory` (built-in) | claude-code-workflow |
-|---|:---:|:---:|
-| **Session history** | No | Yes |
-| **Unfinished task tracking** | No | Yes |
-| **Error learning** | No | Yes (ERR → RUL) |
-| **Cross-project error sharing** | No | Yes |
-| **Multi-project navigation** | No | Yes (work-tree.md) |
-| **Project scaffolding** | No | Yes (v1 + v2) |
-| **Git commit integration** | No | Yes |
-| **Obsidian sync** | No | Yes (optional) |
+| Feature | Claude Code Built-in | claude-code-workflow | Notes |
+|---------|:---:|:---:|:---|
+| **Session resume** | `claude -c`, `/resume` | `/session-start` | Built-in restores exact conversation; workflow restores structured context |
+| **Code rollback** | `/rewind` (checkpointing) | — | Built-in only |
+| **Auto memory** | Auto memory (unstructured) | chatlog.md (structured) | **Complementary** — different purposes |
+| **Unfinished task tracking** | — | Yes (`- [ ]` in chatlog) | **Workflow only** |
+| **Error learning** | Partial (auto memory saves some) | ERR-### → RUL-### (structured) | **Workflow advantage** |
+| **Cross-project error sharing** | — | `~/work_logs/error-rules.md` | **Workflow only** |
+| **Multi-project navigation** | — | `work-tree.md` | **Workflow only** |
+| **Project scaffolding** | `/init` (CLAUDE.md only) | v1 + v2 (full structure) | **Workflow advantage** |
+| **Git commit integration** | Manual | Auto-message from session summary | **Workflow only** |
+| **Global dashboard** | — | `~/work_logs/chatlog.md` | **Workflow only** |
+| **Obsidian sync** | — | Optional | **Workflow only** |
+| **Hooks system** | 16 event types | — | Built-in only |
+| **Security review** | `/security-review` | — | Built-in only |
 
-**They're complementary.** Use `/memory` for static preferences, workflow for session lifecycle.
+**They're complementary, not competing.** Built-in features handle what Claude does automatically (memory, checkpointing, session resume). Workflow handles what you structure intentionally (error learning, multi-project tracking, worklogs, Git).
+
+### vs Similar GitHub Projects
+
+| Feature | claude-code-workflow | [claude-sessions](https://github.com/iannuttall/claude-sessions) (1.1k⭐) | [claude-mem](https://github.com/thedotmack/claude-mem) (36k⭐) | [Claude-Code-Workflow](https://github.com/catlog22/Claude-Code-Workflow) (1.5k⭐) |
+|---------|:---:|:---:|:---:|:---:|
+| Session start/end commands | Yes | Yes | No (auto hook) | Yes |
+| ERR→RUL error learning | **Yes** | No | No | No |
+| Two-layer logging | **Yes** | No | No | No |
+| Multi-project navigation | **Yes** | No | No | No |
+| Project scaffolding | **Yes** | No | No | No |
+| Obsidian sync | **Yes** | No | No | No |
+| Git commit integration | Yes | No | No | Yes |
+| Zero dependencies (plain markdown) | Yes | Yes | No (SQLite+Chroma) | Partial |
 
 ---
 
