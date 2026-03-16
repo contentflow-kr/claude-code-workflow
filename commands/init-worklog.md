@@ -1,14 +1,15 @@
 ---
-allowed-tools: [Read, Write, Edit, Bash, Glob]
-description: "Initialize work_logs structure + register in work-tree.md"
+allowed-tools: [Read, Write, Edit, Bash, Glob, AskUserQuestion]
+description: "Initialize work_logs structure + register in work-tree.md + optional hooks"
 ---
 
-# /init-worklog v2 - Initialize Project Work Logs + Register in Project Map
+# /init-worklog v3 - Initialize Project Work Logs + Project Map + Hooks
 
 ## Purpose
 Create the work_logs/ directory structure in the current project and register it in work-tree.md.
 Existing files are never overwritten — only missing files are created.
 **v2**: Auto-register project in parent work-tree.md and master ~/work-tree.md.
+**v3**: Optional session protection hooks setup (PreCompact / Stop reminder).
 
 ## Execution
 
@@ -133,7 +134,62 @@ Also register in the master `~/work-tree.md`:
 Before adding, check existing tables for matching project name or path.
 If already listed with `work_logs = X`, update to `O`.
 
-### 5. Completion report
+### 5. Session protection hooks (v3)
+
+Ask the user with AskUserQuestion:
+
+**"Set up session protection hooks?"**
+
+| Option | What it does |
+|--------|-------------|
+| **A. Minimal** | PreCompact only — suggests `/session-end` before context compression |
+| **B. Stop reminder** | Stop hook only — reminds based on token usage (fires when Claude finishes responding) |
+| **C. Full (A+B)** | Both PreCompact + Stop reminder |
+| **D. Skip** | No hooks setup |
+
+#### If A or C selected: PreCompact hook
+
+Add to `.claude/settings.json` (create if not exists, merge if exists):
+
+```json
+{
+  "hooks": {
+    "PreCompact": [
+      {
+        "type": "prompt",
+        "prompt": "Context is about to be compressed. Check if meaningful work was done in this session (file changes, decisions, errors). If yes, ask the user: 'Context is about to compress. Run /session-end to save your work first?' If no meaningful work, proceed silently."
+      }
+    ]
+  }
+}
+```
+
+#### If B or C selected: Stop reminder hook
+
+Add to `.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      {
+        "type": "prompt",
+        "prompt": "Check the conversation context usage. If it appears that significant work has been done (multiple file edits, key decisions, error resolutions), briefly remind the user: '💡 Consider running /session-end to save this session.' Only remind once per session — if you already reminded, stay silent."
+      }
+    ]
+  }
+}
+```
+
+#### Settings merge logic
+
+- If `.claude/settings.json` doesn't exist → create with hooks config
+- If it exists but has no `hooks` key → add `hooks` key
+- If it exists with `hooks` → merge new hook entries into existing arrays
+- **Never overwrite existing hooks** — append only
+
+### 6. Completion report
 - List created files
 - List skipped files (already existed)
 - Show work-tree.md registration result (which files were updated)
+- Show hooks setup result (which hooks were configured, or skipped)

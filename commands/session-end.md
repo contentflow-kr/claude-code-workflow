@@ -3,13 +3,14 @@ allowed-tools: [Read, Edit, Write, Bash, AskUserQuestion]
 description: "End session: update chatlog + create worklog + optional Obsidian sync + Git commit"
 ---
 
-# /session-end v4 - Session End with Obsidian CLI + Git Commit
+# /session-end v5 - Session End with Tags + Obsidian CLI + Git Commit
 
 ## Purpose
 Record all work from the current session to chatlog.md, create a dated worklog,
 optionally sync to Obsidian, and commit changes to Git.
 **v3**: Git commit integration with user confirmation.
 **v4**: Optional Obsidian CLI integration (Daily Note + task count).
+**v5**: Auto-generated session tags for searchable history.
 
 ## Execution
 
@@ -24,6 +25,22 @@ Review the conversation to extract:
 - New issues discovered
 - Key decisions made
 - User preferences (newly identified)
+- **Tags/keywords** (v2.1): auto-generate 3-5 tags from session content
+
+### 2.5. Tag generation + user confirmation (v2.1)
+
+Auto-generate 3-5 tags based on session content analysis:
+- Technologies used (e.g., `fastapi`, `postgresql`, `react`)
+- Work type (e.g., `bug-fix`, `feature`, `refactor`, `docs`)
+- Domain keywords (e.g., `auth`, `payment`, `deployment`)
+
+Present to user for confirmation:
+```
+Generated tags: auth, bug-fix, jwt, middleware
+Keep these? (edit or press enter to accept)
+```
+
+User can edit, add, or remove tags before saving.
 
 ### 3. Append new session to chatlog.md
 
@@ -31,6 +48,7 @@ Insert above the `<!-- Add new session above -->` comment:
 
 ```markdown
 ## Session {N} ({today's date}) - {topic summary}
+> tags: {tag1}, {tag2}, {tag3}, {tag4}
 
 ### Tasks Completed
 - Task description
@@ -49,6 +67,8 @@ Insert above the `<!-- Add new session above -->` comment:
 
 ---
 ```
+
+The `> tags:` line enables searching past sessions: `grep "tags:.*auth" work_logs/chatlog.md`
 
 ### 3.5. Append to global dashboard (if configured)
 

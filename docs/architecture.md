@@ -82,8 +82,8 @@ Work normally
 
 | Skill | Current | Changes |
 |-------|---------|---------|
-| `/init-worklog` | **v2** | v1: create work_logs → v2: + work-tree.md registration |
+| `/init-worklog` | **v3** | v1: create work_logs → v2: + work-tree.md → v3: + hooks setup |
 | `/init-project-v1` | v1 | Blank template scaffolding |
 | `/init-project-v2` | v1 | Guided setup with real docs |
 | `/session-start` | **v3** | v1: basic → v2: global mode → v3: + work-tree.md |
-| `/session-end` | **v4** | v1: basic → v2: two-layer → v3: + Git → v4: + Obsidian CLI |
+| `/session-end` | **v5** | v1: basic → v2: two-layer → v3: + Git → v4: + Obsidian CLI → v5: + tags |
