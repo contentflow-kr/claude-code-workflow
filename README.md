@@ -2,7 +2,7 @@
 
 > Session memory, error learning, project scaffolding, and Git integration for Claude Code.
 
-[한국어 README](README.ko.md)
+**English** | [한국어](README.ko.md) | [日本語](README.ja.md) | [中文](README.zh.md) | [Français](README.fr.md)
 
 ---
 
